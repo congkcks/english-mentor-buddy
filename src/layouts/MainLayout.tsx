@@ -3,6 +3,7 @@ import React from 'react';
 import Navbar from '@/components/Navbar';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
+import { useTheme } from '@/components/ThemeProvider';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -10,9 +11,10 @@ interface MainLayoutProps {
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const location = useLocation();
+  const { theme } = useTheme();
 
   return (
-    <div className="min-h-screen flex flex-col bg-background dark:bg-background">
+    <div className={`min-h-screen flex flex-col bg-background ${theme === 'dark' ? 'dark' : ''}`}>
       <Navbar />
       <main className="flex-1">
         <AnimatePresence mode="wait">

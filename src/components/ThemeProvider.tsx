@@ -10,14 +10,18 @@ type ThemeProviderProps = {
 type ThemeContextType = {
   theme: Theme;
   toggleTheme: () => void;
+  setTheme: (theme: Theme) => void;
 };
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(() => {
+    // Kiểm tra trong localStorage
     const savedTheme = localStorage.getItem("theme") as Theme;
-    return savedTheme || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    // Kiểm tra thiết lập của hệ thống
+    const systemPreference = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    return savedTheme || systemPreference;
   });
 
   useEffect(() => {
@@ -32,7 +36,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
       {children}
     </ThemeContext.Provider>
   );

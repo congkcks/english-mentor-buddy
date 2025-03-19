@@ -1,11 +1,21 @@
 
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Book, GraduationCap, MessageCircle } from 'lucide-react';
+import { Book, GraduationCap, MessageCircle, User, Sun, Moon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTheme } from './ThemeProvider';
+import { Button } from './ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
 
 const Navbar = () => {
   const location = useLocation();
+  const { theme, toggleTheme } = useTheme();
   
   const navItems = [
     { name: 'Dictionary', path: '/dictionary', icon: Book, color: 'text-dictionary' },
@@ -14,7 +24,7 @@ const Navbar = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 backdrop-blur-lg bg-white/80">
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 backdrop-blur-lg bg-background/80 dark:bg-background/80">
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
           <motion.div
@@ -55,21 +65,48 @@ const Navbar = () => {
           })}
         </nav>
         
-        <div className="block md:hidden">
-          <div className="flex gap-4">
-            {navItems.map((item) => (
-              <Link 
-                key={item.path} 
-                to={item.path} 
-                className={cn(
-                  "flex items-center justify-center", 
-                  location.pathname === item.path ? item.color : "text-muted-foreground"
-                )}
-              >
-                <item.icon className="w-5 h-5" />
-              </Link>
-            ))}
-          </div>
+        <div className="flex items-center gap-4">
+          {/* Theme Toggle Button */}
+          <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full">
+            {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            <span className="sr-only">Toggle theme</span>
+          </Button>
+
+          {/* Account Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon" className="rounded-full border-border">
+                <User className="h-5 w-5" />
+                <span className="sr-only">Account</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuItem className="font-medium">
+                Tài Khoản
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>Thông tin cá nhân</DropdownMenuItem>
+              <DropdownMenuItem>Cài đặt</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>Đăng xuất</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
+        {/* Mobile Navigation Icons */}
+        <div className="md:hidden flex items-center gap-4">
+          {navItems.map((item) => (
+            <Link 
+              key={item.path} 
+              to={item.path} 
+              className={cn(
+                "flex items-center justify-center", 
+                location.pathname === item.path ? item.color : "text-muted-foreground"
+              )}
+            >
+              <item.icon className="w-5 h-5" />
+            </Link>
+          ))}
         </div>
       </div>
     </header>

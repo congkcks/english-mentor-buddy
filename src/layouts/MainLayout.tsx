@@ -12,7 +12,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const location = useLocation();
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-background dark:bg-background">
       <Navbar />
       <main className="flex-1">
         <AnimatePresence mode="wait">
@@ -31,7 +31,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           </motion.div>
         </AnimatePresence>
       </main>
-      <footer className="py-6 border-t border-border/40">
+      <footer className="py-6 border-t border-border/40 dark:border-border/20">
         <div className="container text-center text-sm text-muted-foreground">
           <p>© {new Date().getFullYear()} EngBuddy. All rights reserved.</p>
         </div>

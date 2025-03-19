@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import FeatureCard from '@/components/FeatureCard';
-import { Book, GraduationCap, MessageCircle, User, Sun, Moon } from 'lucide-react';
+import { Book, GraduationCap, MessageCircle, User, Sun, Moon, Globe } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
 import { Button } from '@/components/ui/button';
 import {
@@ -84,10 +84,20 @@ const Index = () => {
               transition={{ duration: 0.7, ease: "easeOut" }}
               className="space-y-2"
             >
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <Globe className="h-8 w-8 text-primary" />
+                <span className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary via-dictionary to-exercises bg-clip-text text-transparent">
+                  BTL
+                </span>
+                <span className="hidden sm:inline-block text-sm text-muted-foreground">
+                  | Nền tảng học tiếng Anh thông minh
+                </span>
+              </div>
+              
               <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tighter">
                 Nâng cao kỹ năng tiếng Anh với{" "}
                 <span className="bg-gradient-to-r from-primary via-dictionary to-exercises bg-clip-text text-transparent inline-block">
-                  EngBuddy
+                  BTL
                 </span>
               </h1>
               <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl mt-4">
@@ -148,7 +158,7 @@ const Index = () => {
                 Mọi công cụ bạn cần để thành thạo tiếng Anh
               </h2>
               <p className="mx-auto max-w-[700px] text-muted-foreground md:text-lg">
-                EngBuddy kết hợp các tính năng thiết yếu giúp việc học tiếng Anh trở nên hiệu quả và thú vị hơn.
+                BTL kết hợp các tính năng thiết yếu giúp việc học tiếng Anh trở nên hiệu quả và thú vị hơn.
               </p>
             </div>
           </div>

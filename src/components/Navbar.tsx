@@ -35,7 +35,7 @@ const Navbar = () => {
           >
             <Globe className="h-6 w-6 text-primary" />
             <span className="text-2xl font-bold bg-gradient-to-r from-primary to-dictionary bg-clip-text text-transparent">
-              EngBuddy
+              BTL
             </span>
             <span className="hidden sm:inline-block text-sm text-muted-foreground">
               | Nền tảng học tiếng Anh thông minh

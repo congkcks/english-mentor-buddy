@@ -1,7 +1,7 @@
 
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Book, GraduationCap, MessageCircle, User, Sun, Moon } from 'lucide-react';
+import { Book, GraduationCap, MessageCircle, User, Sun, Moon, Globe } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTheme } from './ThemeProvider';
 import { Button } from './ui/button';
@@ -31,9 +31,14 @@ const Navbar = () => {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5 }}
+            className="flex items-center gap-2"
           >
+            <Globe className="h-6 w-6 text-primary" />
             <span className="text-2xl font-bold bg-gradient-to-r from-primary to-dictionary bg-clip-text text-transparent">
               EngBuddy
+            </span>
+            <span className="hidden sm:inline-block text-sm text-muted-foreground">
+              | Nền tảng học tiếng Anh thông minh
             </span>
           </motion.div>
         </Link>

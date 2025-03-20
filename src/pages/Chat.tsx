@@ -1,246 +1,287 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { MessageSquare, Send, RefreshCw } from 'lucide-react';
+import Header from '@/components/Navbar';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
+import { chatService, ChatMessage } from '@/services/consultationService';
 
-import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, Send, User, Trash2, Sparkles } from 'lucide-react';
-import MainLayout from '@/layouts/MainLayout';
-import { cn } from '@/lib/utils';
-
+// Định nghĩa interface Message cho UI
 interface Message {
-  id: string;
+  id: number;
   content: string;
-  sender: 'user' | 'ai';
-  timestamp: Date;
+  isUser: boolean;
+  timestamp: string;
 }
 
-const mockMessages: Message[] = [
-  {
-    id: '1',
-    content: 'Chào Cong! Mình là EngAce, trợ lý ảo được thiết kế riêng để hỗ trợ bạn học tiếng Anh nè.',
-    sender: 'ai',
-    timestamp: new Date('2023-05-10T01:19:00'),
-  },
-  {
-    id: '2',
-    content: 'Mình luôn cố gắng hỗ trợ bạn tốt nhất, nhưng đôi khi vẫn có thể mắc sai sót, nên bạn nhớ kiểm tra lại những thông tin quan trọng nha!',
-    sender: 'ai',
-    timestamp: new Date('2023-05-10T01:19:30'),
-  },
-  {
-    id: '3',
-    content: 'nói về thời tiết trong tiếng anh',
-    sender: 'user',
-    timestamp: new Date('2023-05-10T01:19:45'),
-  },
-  {
-    id: '4',
-    content: 'Chào Cong, mình rất vui khi được giúp bạn học về thời tiết trong tiếng Anh! \n\n1. Từ vựng cơ bản về thời tiết:\n\n• Sun: Mặt trời\n• Rain: Mưa\n• Wind: Gió\n• Cloud: Mây\n• Temperature: Nhiệt độ\n• Hot: Nóng\n• Cold: Lạnh\n• Warm: Ấm áp\n• Cool: Mát mẻ\n• Sunny: Có nắng',
-    sender: 'ai',
-    timestamp: new Date('2023-05-10T01:20:00'),
-  },
-];
-
-const suggestedPrompts = [
-  'Giúp mình học từ vựng về chủ đề gia đình',
-  'Giải thích thì hiện tại hoàn thành',
-  'Các cách để nói "Rất vui được gặp bạn" trong tiếng Anh',
-  'Viết một đoạn văn ngắn về sở thích của tôi',
-];
-
-const Chat = () => {
-  const [messages, setMessages] = useState<Message[]>(mockMessages);
-  const [inputValue, setInputValue] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
+const Consultation: React.FC = () => {
+  const { success, error } = useToast();
+  const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  // Cài đặt người dùng cố định
+  const userSettings = {
+    username: 'Cong',
+    gender: 'Nam',
+    age: 19,
+    englishLevel: 1,
+    enableReasoning: false,
+    enableSearching: false
   };
 
+  // Load initial messages
   useEffect(() => {
-    scrollToBottom();
+    const loadInitialMessages = async () => {
+      try {
+        setIsLoading(true);
+
+        // Load conversation from localStorage
+        const savedChatHistory = chatService.loadConversation();
+
+        if (savedChatHistory.length > 0) {
+          // Convert saved chat history to our Message format
+          const formattedMessages = savedChatHistory.map((chatMsg, index) => ({
+            id: index + 1,
+            content: chatMsg.Message,
+            isUser: chatMsg.FromUser,
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          }));
+
+          setMessages(formattedMessages);
+        } else {
+          // Set default welcome message
+          const welcomeMessage: Message = {
+            id: 1,
+            content: 'Chào! Mình là CDKAce, trợ lý ảo được thiết kế riêng để hỗ trợ bạn học tiếng Anh nè. 😊\n\nMình luôn cố gắng hỗ trợ bạn tốt nhất, nhưng đôi khi vẫn có thể mắc sai sót, nên bạn nhớ kiểm tra lại những thông tin quan trọng nha!',
+            isUser: false,
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          };
+
+          setMessages([welcomeMessage]);
+
+          // Save welcome message to localStorage
+          chatService.saveConversation([
+            {
+              FromUser: false,
+              Message: welcomeMessage.content
+            }
+          ]);
+        }
+      } catch (err) {
+        console.error('Error loading conversation history:', err);
+        error('Không thể tải lịch sử trò chuyện', 'Vui lòng thử lại sau');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadInitialMessages();
+  }, [error]);
+
+  // Scroll to bottom when messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!inputValue.trim()) return;
-    
-    // Add user message
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      content: inputValue,
-      sender: 'user',
-      timestamp: new Date(),
+  const handleSendMessage = async () => {
+    if (!message.trim()) return;
+
+    // Create new user message
+    const newUserMessage: Message = {
+      id: Date.now(),
+      content: message,
+      isUser: true,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
-    
-    setMessages((prev) => [...prev, userMessage]);
-    setInputValue('');
-    setIsTyping(true);
-    
-    // Simulate AI response
-    setTimeout(() => {
-      const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        content: 'Đây là phản hồi mẫu. Trong ứng dụng thực tế, phản hồi sẽ được tạo bởi AI dựa trên câu hỏi của bạn.',
-        sender: 'ai',
-        timestamp: new Date(),
+
+    // Add user message to the UI
+    setMessages(prev => [...prev, newUserMessage]);
+
+    // Clear input field
+    setMessage('');
+
+    // Prepare for API request
+    setIsLoading(true);
+
+    try {
+      // Convert current message history to format expected by API
+      const chatHistory: ChatMessage[] = messages.map(msg => ({
+        FromUser: msg.isUser,
+        Message: msg.content
+      }));
+
+      // Add the new user message to chat history
+      chatHistory.push({
+        FromUser: true,
+        Message: newUserMessage.content
+      });
+
+      // Create request object
+      const request = {
+        ChatHistory: chatHistory,
+        Question: newUserMessage.content,
+        ImagesAsBase64: null
       };
-      
-      setMessages((prev) => [...prev, aiMessage]);
-      setIsTyping(false);
-    }, 1500);
+
+      // Send request to API
+      const response = await chatService.generateAnswer(
+        request,
+        userSettings.username,
+        userSettings.gender,
+        userSettings.age,
+        userSettings.englishLevel,
+        userSettings.enableReasoning,
+        userSettings.enableSearching
+      );
+
+      // Create bot response message
+      const botResponse: Message = {
+        id: Date.now() + 1,
+        content: response,
+        isUser: false,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      // Add bot response to UI
+      setMessages(prev => [...prev, botResponse]);
+
+      // Save updated conversation to localStorage
+      const updatedChatHistory = [
+        ...chatHistory,
+        { FromUser: false, Message: botResponse.content }
+      ];
+      chatService.saveConversation(updatedChatHistory);
+
+    } catch (err) {
+      console.error('Error sending message:', err);
+      error('Không thể gửi tin nhắn', 'Vui lòng thử lại sau');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handlePromptClick = (prompt: string) => {
-    setInputValue(prompt);
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
   };
 
-  const clearChat = () => {
-    setMessages([]);
+  const handleClearConversation = async () => {
+    try {
+      setIsLoading(true);
+
+      // Clear conversation in localStorage
+      chatService.clearConversation();
+
+      // Add new welcome message
+      const welcomeMessage: Message = {
+        id: Date.now(),
+        content: 'Cuộc trò chuyện đã được làm mới. Bạn có thể bắt đầu cuộc trò chuyện mới!',
+        isUser: false,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      setMessages([welcomeMessage]);
+
+      // Save welcome message to localStorage
+      chatService.saveConversation([
+        { FromUser: false, Message: welcomeMessage.content }
+      ]);
+
+      success('Đã xóa cuộc trò chuyện', 'Cuộc trò chuyện đã được làm mới');
+    } catch (err) {
+      console.error('Error clearing conversation:', err);
+      error('Không thể xóa cuộc trò chuyện', 'Vui lòng thử lại sau');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <MainLayout>
-      <div className="container px-0 md:px-6 py-0 md:py-8 max-w-4xl h-[calc(100vh-4rem)] flex flex-col">
-        <div className="md:rounded-xl border border-border/50 shadow-sm overflow-hidden flex flex-col h-full bg-card">
-          {/* Header */}
-          <div className="p-4 border-b border-border/50 flex justify-between items-center">
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-1 container max-w-screen-xl mx-auto py-4 px-4 flex flex-col">
+        <div className="flex-1 bg-white rounded-lg shadow-sm overflow-hidden flex flex-col">
+          <div className="border-b p-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="bg-chat/10 p-1.5 rounded-full">
-                <MessageCircle className="w-5 h-5 text-chat" />
+              <div className="w-10 h-10 bg-engace-orange rounded-lg flex items-center justify-center">
+                <MessageSquare size={20} color="white" />
               </div>
-              <h2 className="font-semibold">Chat với AI</h2>
+              <h2 className="font-semibold text-lg">Tư vấn với CDKAce</h2>
             </div>
-            <button 
-              onClick={clearChat} 
-              className="p-2 text-muted-foreground hover:text-destructive transition-colors rounded-md"
-              title="Xóa cuộc trò chuyện"
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-red-500 hover:text-red-600 hover:bg-red-50"
+              onClick={handleClearConversation}
+              disabled={isLoading}
             >
-              <Trash2 className="w-4 h-4" />
-            </button>
+              <RefreshCw size={16} className="mr-2" />
+              Làm mới
+            </Button>
           </div>
-          
-          {/* Messages */}
-          <div className="flex-grow overflow-y-auto p-4">
-            {messages.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-center p-8">
-                <div className="bg-chat/10 p-3 rounded-full mb-4">
-                  <MessageCircle className="w-6 h-6 text-chat" />
-                </div>
-                <h3 className="text-lg font-medium mb-2">Bắt đầu cuộc trò chuyện</h3>
-                <p className="text-muted-foreground max-w-md mb-6">
-                  Hãy đặt câu hỏi hoặc yêu cầu trợ giúp về bất kỳ chủ đề tiếng Anh nào bạn quan tâm.
-                </p>
-                <div className="flex flex-wrap gap-2 justify-center">
-                  {suggestedPrompts.map((prompt, index) => (
-                    <button
-                      key={index}
-                      onClick={() => handlePromptClick(prompt)}
-                      className="px-3 py-1.5 text-sm bg-muted rounded-md hover:bg-muted/80 transition-colors text-left"
-                    >
-                      {prompt}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                <AnimatePresence>
-                  {messages.map((message) => (
-                    <motion.div
-                      key={message.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className={cn(
-                        "flex",
-                        message.sender === 'user' ? "justify-end" : "justify-start"
-                      )}
-                    >
-                      <div className={cn(
-                        "max-w-[85%] md:max-w-[75%] rounded-xl px-4 py-3",
-                        message.sender === 'user' 
-                          ? "bg-primary text-primary-foreground rounded-tr-none" 
-                          : "bg-chat/10 text-foreground rounded-tl-none"
-                      )}>
-                        <div className="whitespace-pre-wrap text-sm">{message.content}</div>
-                        <div className="text-[10px] mt-1 opacity-70 text-right">
-                          {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-                
-                {isTyping && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="flex justify-start"
-                  >
-                    <div className="bg-chat/10 text-foreground rounded-xl rounded-tl-none px-4 py-3">
-                      <div className="flex space-x-1">
-                        <div className="w-2 h-2 rounded-full bg-foreground/60 animate-pulse"></div>
-                        <div className="w-2 h-2 rounded-full bg-foreground/60 animate-pulse delay-75"></div>
-                        <div className="w-2 h-2 rounded-full bg-foreground/60 animate-pulse delay-150"></div>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-                
-                <div ref={messagesEndRef} />
-              </div>
-            )}
-          </div>
-          
-          {/* Input */}
-          <div className="p-4 border-t border-border/50">
-            <form onSubmit={handleSubmit} className="flex items-center gap-2">
-              <div className="relative flex-grow">
-                <input
-                  type="text"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  placeholder="Nhập tin nhắn của bạn..."
-                  className="w-full px-4 py-2.5 pr-10 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-                />
-                <div className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground">
-                  <Sparkles className="w-4 h-4" />
-                </div>
-              </div>
-              <button
-                type="submit"
-                disabled={!inputValue.trim()}
-                className={cn(
-                  "p-2.5 rounded-lg flex items-center justify-center transition-colors",
-                  inputValue.trim()
-                    ? "bg-chat text-white hover:bg-chat/90" 
-                    : "bg-muted text-muted-foreground cursor-not-allowed"
-                )}
+
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {messages.map(msg => (
+              <div
+                key={msg.id}
+                className={`max-w-3xl ${msg.isUser ? 'ml-auto' : ''}`}
               >
-                <Send className="w-4 h-4" />
-              </button>
-            </form>
-            
-            {/* Suggested prompts */}
-            {messages.length > 0 && (
-              <div className="mt-3 flex flex-wrap gap-2">
-                {suggestedPrompts.slice(0, 2).map((prompt, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handlePromptClick(prompt)}
-                    className="px-2.5 py-1 text-xs bg-muted/70 rounded-md hover:bg-muted transition-colors truncate max-w-[200px]"
-                  >
-                    {prompt}
-                  </button>
-                ))}
+                <div
+                  className={`rounded-2xl p-4 ${msg.isUser
+                    ? 'bg-blue-100 text-right'
+                    : 'bg-orange-100'
+                    }`}
+                >
+                  <p className="whitespace-pre-line">{msg.content}</p>
+                </div>
+                <div className="text-xs text-gray-500 mt-1">
+                  {msg.timestamp}
+                </div>
+              </div>
+            ))}
+            {isLoading && (
+              <div className="max-w-3xl">
+                <div className="bg-orange-100 rounded-2xl p-4">
+                  <div className="flex space-x-2">
+                    <div className="w-3 h-3 rounded-full bg-gray-400 animate-bounce"></div>
+                    <div className="w-3 h-3 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                    <div className="w-3 h-3 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                  </div>
+                </div>
               </div>
             )}
+            <div ref={messagesEndRef} />
+          </div>
+
+          <div className="border-t p-4">
+            <div className="flex gap-2">
+              <div className="flex-1 relative">
+                <Input
+                  placeholder="Nhập tin nhắn của bạn..."
+                  className="pr-10 py-6 rounded-xl"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  disabled={isLoading}
+                />
+              </div>
+              <Button
+                className="bg-engace-orange hover:bg-engace-orange/90 rounded-xl px-4"
+                onClick={handleSendMessage}
+                disabled={isLoading || !message.trim()}
+              >
+                <Send size={20} />
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
-    </MainLayout>
+      </main>
+    </div>
   );
 };
 
-export default Chat;
+export default Consultation;

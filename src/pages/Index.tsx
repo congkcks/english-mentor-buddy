@@ -2,16 +2,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import FeatureCard from '@/components/FeatureCard';
-import { Book, GraduationCap, MessageCircle, User, Sun, Moon, Globe } from 'lucide-react';
-import { useTheme } from '@/components/ThemeProvider';
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { Book, GraduationCap, MessageCircle, Globe } from 'lucide-react';
+import MainLayout from '@/layouts/MainLayout';
 
 const features = [
   {
@@ -41,39 +33,8 @@ const features = [
 ];
 
 const Index = () => {
-  const { theme, toggleTheme } = useTheme();
-  
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex flex-col">
-      {/* Header của trang chủ với chế độ sáng tối và tài khoản */}
-      <div className="container px-4 md:px-6 py-4 flex justify-end gap-4">
-        {/* Theme Toggle Button */}
-        <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full">
-          {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-          <span className="sr-only">Chuyển đổi giao diện</span>
-        </Button>
-
-        {/* Account Dropdown */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="icon" className="rounded-full border-border">
-              <User className="h-5 w-5" />
-              <span className="sr-only">Tài khoản</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuItem className="font-medium">
-              Tài Khoản
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Thông tin cá nhân</DropdownMenuItem>
-            <DropdownMenuItem>Cài đặt</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Đăng xuất</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-
+    <MainLayout>
       {/* Hero Section */}
       <section className="pt-4 pb-20 md:pt-10 md:pb-32 overflow-hidden">
         <div className="container px-4 md:px-6">
@@ -174,7 +135,7 @@ const Index = () => {
           </div>
         </div>
       </section>
-    </div>
+    </MainLayout>
   );
 };
 

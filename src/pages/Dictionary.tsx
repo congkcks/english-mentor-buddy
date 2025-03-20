@@ -1,188 +1,119 @@
-
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Book, Bookmark, Volume2, Star } from 'lucide-react';
-import SearchInput from '@/components/SearchInput';
-import MainLayout from '@/layouts/MainLayout';
+import { BookText, Search, Star } from 'lucide-react';
+import Header from '@/components/Navbar';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
+import { dictionaryService } from '@/services/dictionaryService';
+import { useApi } from '@/hooks/use-api';
 
-interface WordDefinition {
-  word: string;
-  phonetic: string;
-  meanings: {
-    partOfSpeech: string;
-    definitions: {
-      definition: string;
-      example?: string;
-    }[];
-  }[];
-  examples: string[];
-}
-
-const dictionarySuggestions = [
-  'blessing in disguise',
-  'spill the beans',
-  'incentivize',
-  'persistent',
-  'innovative',
-];
-
-// Mock data for demonstration
-const mockWord: WordDefinition = {
-  word: 'innovative',
-  phonetic: '/ˈɪnəveɪtɪv/',
-  meanings: [
-    {
-      partOfSpeech: 'adjective',
-      definitions: [
-        {
-          definition: 'Introducing new ideas; original and creative in thinking.',
-          example: 'Innovative approaches to teaching',
-        },
-        {
-          definition: 'Featuring new methods; advanced and original.',
-          example: 'Innovative designs',
-        },
-      ],
-    },
-  ],
-  examples: [
-    'The company is known for its innovative products.',
-    'She has an innovative approach to problem-solving.',
-    'The team developed an innovative solution to the challenge.',
-  ],
-};
-
-const Dictionary = () => {
+const Dictionary: React.FC = () => {
+  const navigate = useNavigate();
+  const { error } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
-  const [wordData, setWordData] = useState<WordDefinition | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSearch = (term: string) => {
-    setSearchTerm(term);
-    setIsLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      setWordData(mockWord);
-      setIsLoading(false);
-    }, 800);
+  const { isLoading, request } = useApi();
+
+  const handleSearch = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+
+    if (!searchTerm.trim()) {
+      error('Vui lòng nhập từ cần tra cứu', 'Bạn chưa nhập từ hoặc cụm từ để tra cứu');
+      return;
+    }
+
+    try {
+      // Attempt to fetch the word definition
+      const wordResult = await request(
+        () => dictionaryService.searchWord(searchTerm.trim()),
+        {
+          skipToast: true,
+        }
+      );
+
+      if (wordResult) {
+        // If successful, navigate to the result page
+        navigate(`/dictionary-result?keyword=${encodeURIComponent(searchTerm.trim())}`);
+      } else {
+        error('Không tìm thấy từ', 'Từ này không có trong từ điển của chúng tôi');
+      }
+    } catch (err) {
+      console.error('Error searching word:', err);
+      error('Không thể tra cứu từ', 'Đã xảy ra lỗi khi tra cứu. Vui lòng thử lại sau.');
+    }
+  };
+
+  const handleAddToFavorites = async (word: string) => {
+    try {
+      if (!word.trim()) {
+        return;
+      }
+
+      await request(
+        () => dictionaryService.addToFavorites(word),
+        {
+          successMessage: 'Đã thêm vào danh sách yêu thích',
+          errorMessage: 'Không thể thêm vào danh sách yêu thích'
+        }
+      );
+    } catch (err) {
+      console.error('Error adding to favorites:', err);
+    }
   };
 
   return (
-    <MainLayout>
-      <div className="container px-4 py-10 md:py-16 max-w-5xl">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="space-y-2 text-center mb-8"
-        >
-          <div className="inline-flex items-center justify-center p-2 bg-dictionary/10 rounded-lg mb-4">
-            <Book className="w-6 h-6 text-dictionary" />
+    <div className="min-h-screen flex flex-col bg-engace-light dark:bg-gray-900">
+      <Header />
+      <main className="flex-1 container max-w-screen-xl mx-auto py-8 px-4 animate-fade-in">
+        <div className="flex justify-center mb-8">
+          <div className="w-24 h-24 bg-engace-blue rounded-2xl flex items-center justify-center">
+            <BookText size={48} color="white" />
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold">Từ điển</h1>
-          <p className="text-muted-foreground max-w-3xl mx-auto">
-            Tra cứu từ vựng với định nghĩa chi tiết, ví dụ thực tế và gợi ý sử dụng trong nhiều ngữ cảnh khác nhau.
-          </p>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="max-w-2xl mx-auto"
-        >
-          <SearchInput
-            placeholder="Nhập từ hoặc cụm từ cần tra cứu..."
-            suggestions={dictionarySuggestions}
-            onSearch={handleSearch}
-            iconColor="text-dictionary"
-          />
-        </motion.div>
+        <h1 className="text-4xl font-bold text-center mb-2 dark:text-white">TỪ ĐIỂN</h1>
+        <p className="text-center text-gray-600 dark:text-gray-400 mb-8 max-w-2xl mx-auto">
+          Tra cứu từ vựng với định nghĩa chi tiết, ví dụ thực tế và gợi ý sử dụng trong nhiều ngữ
+          cảnh khác nhau.
+        </p>
 
-        {isLoading && (
-          <div className="flex justify-center mt-12">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-dictionary"></div>
+        <form onSubmit={handleSearch} className="max-w-2xl mx-auto mb-8">
+          <div className="relative">
+            <Input
+              placeholder="Nhập từ hoặc cụm từ cần tra cứu..."
+              className="pl-4 pr-10 py-6 rounded-xl text-lg dark:bg-gray-800 dark:text-white dark:border-gray-700"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              disabled={isLoading}
+            />
+            <Star
+              className="absolute right-12 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-engace-purple cursor-pointer"
+              size={20}
+              onClick={() => handleAddToFavorites(searchTerm)}
+            />
+            <Button
+              type="submit"
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-transparent hover:bg-transparent dark:text-gray-300"
+              disabled={isLoading}
+            >
+              <Search className="text-gray-500 dark:text-gray-300" size={20} />
+            </Button>
           </div>
-        )}
+        </form>
 
-        {wordData && !isLoading && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="mt-10 max-w-3xl mx-auto"
+        <div className="max-w-2xl mx-auto">
+          <Button
+            onClick={handleSearch}
+            className="w-full py-6 bg-gray-600 hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-xl flex items-center justify-center gap-2 text-lg"
+            disabled={isLoading}
           >
-            <div className="bg-card rounded-xl border border-border/50 shadow-sm overflow-hidden">
-              <div className="p-6 md:p-8">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h2 className="text-2xl md:text-3xl font-bold">{wordData.word}</h2>
-                    <div className="flex items-center gap-2 mt-1 text-muted-foreground">
-                      <span>{wordData.phonetic}</span>
-                      <button className="p-1 hover:text-dictionary transition-colors">
-                        <Volume2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                  <button className="p-2 hover:text-dictionary transition-colors">
-                    <Bookmark className="w-5 h-5" />
-                  </button>
-                </div>
-
-                <div className="mt-8 space-y-6">
-                  {wordData.meanings.map((meaning, index) => (
-                    <div key={index}>
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className="text-sm font-medium px-2.5 py-0.5 rounded-md bg-muted">
-                          {meaning.partOfSpeech}
-                        </span>
-                      </div>
-                      <div className="space-y-3">
-                        {meaning.definitions.map((def, idx) => (
-                          <div key={idx} className="pl-4 border-l-2 border-border">
-                            <p className="text-sm md:text-base">{def.definition}</p>
-                            {def.example && (
-                              <p className="text-sm text-muted-foreground mt-1 italic">
-                                "{def.example}"
-                              </p>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {wordData.examples.length > 0 && (
-                  <div className="mt-8">
-                    <h3 className="text-lg font-semibold mb-3 flex items-center gap-1.5">
-                      <Star className="w-4 h-4 text-amber-500" />
-                      Ví dụ
-                    </h3>
-                    <div className="bg-muted/50 rounded-lg p-4 space-y-2">
-                      {wordData.examples.map((example, index) => (
-                        <p key={index} className="text-sm">
-                          • {example}
-                        </p>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </motion.div>
-        )}
-
-        {!isLoading && !wordData && searchTerm && (
-          <div className="mt-10 text-center">
-            <p className="text-muted-foreground">
-              Không tìm thấy từ "{searchTerm}". Vui lòng kiểm tra lại từ khóa hoặc thử một từ khác.
-            </p>
-          </div>
-        )}
-      </div>
-    </MainLayout>
+            <Search size={20} />
+            {isLoading ? 'Đang tra cứu...' : 'Tra cứu'}
+          </Button>
+        </div>
+      </main>
+    </div>
   );
 };
 

@@ -8,7 +8,7 @@ namespace EngAce.Api.Controllers
     [ApiController]
     public class HealthcheckController(ILogger<HealthcheckController> logger) : ControllerBase
     {
-        private readonly string _accessKey = HttpContextHelper.GetAccessKey();
+        private readonly string _accessKey = HttpContextHelper.GetSecretKey();
         private readonly ILogger<HealthcheckController> _logger = logger;
 
         [HttpGet]

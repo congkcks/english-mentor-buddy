@@ -30,7 +30,7 @@ builder.Services.AddSwaggerGen(c =>
     {
         Title = "EngAce APIs Documentation",
         Version = "v1.0.0",
-        Description = "Developed by Phan Xuan Quang."
+        Description = "Developed by Nhóm 12."
     });
 
     c.AddSecurityDefinition("ApiKey", new OpenApiSecurityScheme

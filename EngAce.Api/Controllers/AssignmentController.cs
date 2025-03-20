@@ -14,7 +14,7 @@ namespace EngAce.Api.Controllers
     {
         private readonly IMemoryCache _cache = cache;
         private readonly ILogger<AssignmentController> _logger = logger;
-        private readonly string _accessKey = HttpContextHelper.GetAccessKey();
+        private readonly string _accessKey = HttpContextHelper.GetSecretKey();
 
         [HttpPost("Generate")]
         public async Task<ActionResult<List<Quiz>>> Generate([FromBody] GenerateQuizzes request)

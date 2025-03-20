@@ -11,12 +11,13 @@ namespace EngAce.Api.Controllers
     {
         private readonly IMemoryCache _cache = cache;
         private readonly ILogger<DictionaryController> _logger = logger;
-        private readonly string _accessKey = HttpContextHelper.GetAccessKey();
+        private readonly  string _accessKey = HttpContextHelper.GetSecretKey();
 
         [HttpGet("Search")]
         [ResponseCache(Duration = QuizScope.ThreeDaysAsCachingAge, Location = ResponseCacheLocation.Any, NoStore = false)]
         public async Task<ActionResult<string>> Search(string keyword, string? context)
         {
+            
             if (string.IsNullOrEmpty(_accessKey))
             {
                 return Unauthorized("Invalid Access Key");

@@ -26,5 +26,8 @@ namespace Helper
 
             return key;
         }
+        public static string? GetSecretKey() {
+            return "AIzaSyBJyGB4XXKjGSWRy1KiZtG1i7-O8OCxDwg";
+        }
     }
 }

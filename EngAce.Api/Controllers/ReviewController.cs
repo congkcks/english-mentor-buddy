@@ -10,7 +10,7 @@ namespace EngAce.Api.Controllers
     [ApiController]
     public class ReviewController() : ControllerBase
     {
-        private readonly string _accessKey = HttpContextHelper.GetAccessKey();
+        private readonly string _accessKey = HttpContextHelper.GetSecretKey();
 
         [HttpPost("Generate")]
         [ResponseCache(Duration = ReviewScope.OneHourAsCachingAge, Location = ResponseCacheLocation.Client, NoStore = false)]

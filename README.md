@@ -1,44 +1,57 @@
 # CDKAce 🌐📚
 
-## Tổng Quan 🚀
-CDKAce là một ứng dụng được hỗ trợ bởi AI, được thiết kế để cách mạng hóa việc học tiếng Anh cho người học tiếng Việt. Chúng tôi đã tạo ra một trải nghiệm học tập cá nhân hóa kết hợp công nghệ AI với các tính năng toàn diện để mang lại môi trường học tiếng Anh hấp dẫn và hiệu quả.
+## 🚀 Giới Thiệu
+CDKAce là một ứng dụng hỗ trợ học tiếng Anh dành cho người dùng tiếng Việt, kết hợp công nghệ AI để mang đến trải nghiệm học tập cá nhân hóa, hiệu quả và hấp dẫn.
 
-## Đội Ngũ 👥
+---
+
+## 👥 Đội Ngũ Phát Triển
 - 👨‍💻 Vũ Văn Hà Công
 - 👨‍🏫 Trần Thái Dương
 - 👨‍💼 Lê Trung Kiên
 
-## Tính Năng 🛠️
+---
 
-### Từ Điển Thông Minh 📖
-Từ điển tiếng Anh toàn diện dành riêng cho người học tiếng Việt:
+## 🛠️ Tính Năng Nổi Bật
+
+### 📖 Từ Điển Thông Minh
+Một từ điển toàn diện được thiết kế dành riêng cho người học tiếng Anh:
 - 🔍 Giải thích chi tiết
 - 💬 Thành ngữ và cụm động từ
 - 🌈 Ngữ cảnh tiếng Việt chuyên sâu
 - 📝 Câu ví dụ minh họa
 - 🔎 Tìm kiếm theo ngữ cảnh
 
-### Bài Tập Cá Nhân Hóa 📊
+### 📊 Bài Tập Cá Nhân Hóa
 - 🎯 Bài tập thực hành tùy chỉnh
 - 🧠 Học tập thích ứng
-- 📋 Hỗ trợ tối đa 100 câu đố cho mỗi yêu cầu
+- 📋 Hỗ trợ tối đa 100 câu đố mỗi lần yêu cầu
 - 🧩 12 loại câu đố khác nhau
 
-### Trợ Lý Chat AI 🤖
+### 🤖 Trợ Lý Chat AI
 - 💬 Chatbot đồng hành tương tác
 - 🗣️ Thảo luận về các chủ đề học tiếng Anh
 - 💡 Lời khuyên và mẹo học tập
 - ❓ Hỗ trợ hỏi đáp
 - 🌐 Tích hợp tìm kiếm Google để xác minh câu trả lời
 
-## Đóng Góp 🤝
-Chúng tôi hoan nghênh các đóng góp! 
-- 🐞 Nếu bạn gặp vấn đề hoặc có đề xuất cải tiến, vui lòng mở một vấn đề.
-- 📤 Khi gửi yêu cầu kéo, hãy đảm bảo các thay đổi được ghi chép đầy đủ.
+---
 
-## Quyền Riêng Tư 🔒
-Nếu có bất kỳ câu hỏi nào về phương pháp bảo vệ dữ liệu của chúng tôi, vui lòng mở một vấn đề mới.
+## 🤝 Đóng Góp
+Chúng tôi hoan nghênh mọi đóng góp từ cộng đồng!
+- 🐞 Nếu bạn gặp vấn đề hoặc có đề xuất cải tiến, vui lòng mở một **issue**.
+- 📤 Khi gửi pull request, hãy đảm bảo các thay đổi được ghi chép đầy đủ.
 
-## Link Demo: https://congkcks.github.io/english-mentor-buddy/
-UserName:cong
-Pass:123
+---
+
+## 🔒 Quyền Riêng Tư
+Nếu bạn có bất kỳ câu hỏi nào liên quan đến bảo vệ dữ liệu và quyền riêng tư, vui lòng mở một **issue** mới.
+
+---
+
+## 🔗 Link Demo
+[Truy cập ngay](https://congkcks.github.io/english-mentor-buddy/)
+
+📌 **UserName:** `cong`  
+🔑 **Pass:** `123`
+

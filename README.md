@@ -24,7 +24,7 @@ Từ điển tiếng Anh toàn diện dành riêng cho người học tiếng Vi
 - 📋 Hỗ trợ tối đa 100 câu đố cho mỗi yêu cầu
 - 🧩 12 loại câu đố khác nhau
 
-### Trợ Lý Viết AI 🤖
+### Trợ Lý Chat AI 🤖
 - 💬 Chatbot đồng hành tương tác
 - 🗣️ Thảo luận về các chủ đề học tiếng Anh
 - 💡 Lời khuyên và mẹo học tập
@@ -39,9 +39,6 @@ Chúng tôi hoan nghênh các đóng góp!
 ## Quyền Riêng Tư 🔒
 Nếu có bất kỳ câu hỏi nào về phương pháp bảo vệ dữ liệu của chúng tôi, vui lòng mở một vấn đề mới.
 
-## Giấy Phép 📄
-[Thêm Thông Tin Giấy Phép]
-
-## Liên Hệ 📧
-[Thêm Thông Tin Liên Hệ]
-
+## Link Demo: https://congkcks.github.io/english-mentor-buddy/
+UserName:cong
+Pass:123

@@ -1,7 +1,7 @@
-# EngAce 🌐📚
+# CDKAce 🌐📚
 
 ## Tổng Quan 🚀
-EngAce là một ứng dụng được hỗ trợ bởi AI, được thiết kế để cách mạng hóa việc học tiếng Anh cho người học tiếng Việt. Chúng tôi đã tạo ra một trải nghiệm học tập cá nhân hóa kết hợp công nghệ AI với các tính năng toàn diện để mang lại môi trường học tiếng Anh hấp dẫn và hiệu quả.
+CDKAce là một ứng dụng được hỗ trợ bởi AI, được thiết kế để cách mạng hóa việc học tiếng Anh cho người học tiếng Việt. Chúng tôi đã tạo ra một trải nghiệm học tập cá nhân hóa kết hợp công nghệ AI với các tính năng toàn diện để mang lại môi trường học tiếng Anh hấp dẫn và hiệu quả.
 
 ## Đội Ngũ 👥
 - 👨‍💻 Vũ Văn Hà Công

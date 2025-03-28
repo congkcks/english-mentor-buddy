@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Book, GraduationCap, MessageCircle, User, Sun, Moon, Globe, Settings, LogOut, UserCircle } from 'lucide-react';
@@ -11,7 +10,6 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuGroup,
   DropdownMenuLabel,
 } from './ui/dropdown-menu';
 import {
@@ -32,21 +30,100 @@ import {
   SheetTrigger,
   SheetFooter,
 } from './ui/sheet';
+import { useAuth } from './AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { Input } from './ui/input';
+import { Label } from './ui/label';
+import { supabase } from '@/services/supabaseClient';
+import { useToast } from '@/hooks/use-toast';
 
 const Navbar = () => {
   const location = useLocation();
   const { theme, toggleTheme } = useTheme();
-  
+  const { user, login, logout } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    tendangnhap: user?.tendangnhap || '',
+    email: user?.email || '',
+    englishlevel: user?.englishlevel || '',
+    password: user?.password || '', // Hiển thị mật khẩu hiện tại
+  });
+
   const navItems = [
     { name: 'Dictionary', path: '/dictionary', icon: Book, color: 'text-dictionary' },
     { name: 'Exercises', path: '/exercises', icon: GraduationCap, color: 'text-exercises' },
     { name: 'AI Chat', path: '/chat', icon: MessageCircle, color: 'text-chat' },
   ];
 
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleEditToggle = () => {
+    setIsEditing(true);
+    setFormData({
+      tendangnhap: user?.tendangnhap || '',
+      email: user?.email || '',
+      englishlevel: user?.englishlevel || '',
+      password: user?.password || '', // Giữ mật khẩu hiện tại
+    });
+  };
+
+  const handleSave = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('user')
+        .update({
+          tendangnhap: formData.tendangnhap,
+          email: formData.email,
+          englishlevel: formData.englishlevel,
+          password: formData.password, // Cập nhật mật khẩu thô
+        })
+        .eq('id', user.id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Cập nhật user trong Context
+      login({ ...user, ...data });
+
+      toast({
+        title: "Cập nhật thành công",
+        description: "Thông tin cá nhân đã được lưu.",
+        variant: "default",
+      });
+
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Update error:', error);
+      toast({
+        title: "Cập nhật thất bại",
+        description: "Có lỗi xảy ra khi lưu thông tin. Vui lòng kiểm tra lại.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 backdrop-blur-lg bg-background/80 dark:bg-background/80">
       <div className="container flex h-16 items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
+        <Link to="/index" className="flex items-center gap-2">
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -66,8 +143,8 @@ const Navbar = () => {
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
             return (
-              <Link 
-                key={item.path} 
+              <Link
+                key={item.path}
                 to={item.path}
                 className={cn(
                   "flex items-center gap-1.5 font-medium transition-colors hover:text-foreground relative py-2",
@@ -77,9 +154,9 @@ const Navbar = () => {
                 <item.icon className={cn("w-4 h-4", item.color)} />
                 <span>{item.name}</span>
                 {isActive && (
-                  <motion.div 
+                  <motion.div
                     layoutId="navbar-indicator"
-                    className="absolute -bottom-[1px] left-0 right-0 h-[2px] bg-primary" 
+                    className="absolute -bottom-[1px] left-0 right-0 h-[2px] bg-primary"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.3 }}
@@ -89,15 +166,13 @@ const Navbar = () => {
             );
           })}
         </nav>
-        
+
         <div className="flex items-center gap-4">
-          {/* Theme Toggle Button */}
           <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full">
             {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             <span className="sr-only">Toggle theme</span>
           </Button>
 
-          {/* Account Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="icon" className="rounded-full border-border">
@@ -107,10 +182,10 @@ const Navbar = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel className="font-medium">
-                Tài Khoản
+                {user ? `Xin chào, ${user.tendangnhap}` : 'Tài Khoản'}
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              
+
               <Dialog>
                 <DialogTrigger asChild>
                   <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
@@ -131,39 +206,107 @@ const Navbar = () => {
                         <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center overflow-hidden border-2 border-primary">
                           <UserCircle className="w-20 h-20 text-muted-foreground" />
                         </div>
-                        <Button size="sm" variant="outline" className="absolute bottom-0 right-0 rounded-full size-8 p-0">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="absolute bottom-0 right-0 rounded-full size-8 p-0"
+                        >
                           <Settings className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
-                    
-                    <div className="space-y-2">
-                      <h4 className="font-medium text-sm">Họ và tên</h4>
-                      <p className="text-muted-foreground">Nguyễn Văn A</p>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <h4 className="font-medium text-sm">Email</h4>
-                      <p className="text-muted-foreground">nguyenvana@gmail.com</p>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <h4 className="font-medium text-sm">Cấp độ</h4>
-                      <p className="text-muted-foreground">Trung cấp</p>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <h4 className="font-medium text-sm">Ngày tham gia</h4>
-                      <p className="text-muted-foreground">01/01/2023</p>
-                    </div>
+
+                    {isEditing ? (
+                      <>
+                        <div className="space-y-2">
+                          <Label htmlFor="tendangnhap" className="font-medium text-sm">Tên đăng nhập</Label>
+                          <Input
+                            id="tendangnhap"
+                            name="tendangnhap"
+                            value={formData.tendangnhap}
+                            onChange={handleInputChange}
+                            className="w-full"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="email" className="font-medium text-sm">Email</Label>
+                          <Input
+                            id="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleInputChange}
+                            className="w-full"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="englishlevel" className="font-medium text-sm">Cấp độ</Label>
+                          <Input
+                            id="englishlevel"
+                            name="englishlevel"
+                            value={formData.englishlevel}
+                            onChange={handleInputChange}
+                            className="w-full"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="password" className="font-medium text-sm">Mật khẩu</Label>
+                          <Input
+                            id="password"
+                            name="password"
+                            type="password"
+                            value={formData.password}
+                            onChange={handleInputChange}
+                            className="w-full"
+                            placeholder="Nhập mật khẩu mới"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <h4 className="font-medium text-sm">Ngày tham gia</h4>
+                          <p className="text-muted-foreground">
+                            {user?.ngaytaotaikhoan ? new Date(user.ngaytaotaikhoan).toLocaleDateString() : 'Chưa có'}
+                          </p>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="space-y-2">
+                          <h4 className="font-medium text-sm">Tên đăng nhập</h4>
+                          <p className="text-muted-foreground">{user?.tendangnhap || 'Chưa đăng nhập'}</p>
+                        </div>
+                        <div className="space-y-2">
+                          <h4 className="font-medium text-sm">Email</h4>
+                          <p className="text-muted-foreground">{user?.email || 'Chưa có'}</p>
+                        </div>
+                        <div className="space-y-2">
+                          <h4 className="font-medium text-sm">Cấp độ</h4>
+                          <p className="text-muted-foreground">{user?.englishlevel || 'Chưa có'}</p>
+                        </div>
+                        <div className="space-y-2">
+                          <h4 className="font-medium text-sm">Ngày tham gia</h4>
+                          <p className="text-muted-foreground">
+                            {user?.ngaytaotaikhoan ? new Date(user.ngaytaotaikhoan).toLocaleDateString() : 'Chưa có'}
+                          </p>
+                        </div>
+                      </>
+                    )}
                   </div>
                   <DialogFooter>
-                    <Button variant="outline">Chỉnh sửa</Button>
-                    <Button>Lưu thay đổi</Button>
+                    {isEditing ? (
+                      <>
+                        <Button variant="outline" onClick={() => setIsEditing(false)}>
+                          Hủy
+                        </Button>
+                        <Button onClick={handleSave}>Lưu thay đổi</Button>
+                      </>
+                    ) : (
+                      <Button variant="outline" onClick={handleEditToggle}>
+                        Chỉnh sửa
+                      </Button>
+                    )}
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
-              
+
               <Sheet>
                 <SheetTrigger asChild>
                   <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
@@ -189,30 +332,6 @@ const Navbar = () => {
                         </Button>
                       </div>
                     </div>
-                    
-                    <div className="space-y-4">
-                      <h3 className="font-medium">Thông báo</h3>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm">Email thông báo</span>
-                        <Button variant="outline" size="sm">Bật</Button>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm">Nhắc nhở hàng ngày</span>
-                        <Button variant="outline" size="sm">Tắt</Button>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-4">
-                      <h3 className="font-medium">Bảo mật</h3>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm">Đổi mật khẩu</span>
-                        <Button variant="outline" size="sm">Cập nhật</Button>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm">Xác thực hai yếu tố</span>
-                        <Button variant="outline" size="sm">Thiết lập</Button>
-                      </div>
-                    </div>
                   </div>
                   <SheetFooter>
                     <Button variant="outline">Hủy</Button>
@@ -220,9 +339,9 @@ const Navbar = () => {
                   </SheetFooter>
                 </SheetContent>
               </Sheet>
-              
+
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout}>
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Đăng xuất</span>
               </DropdownMenuItem>
@@ -230,14 +349,13 @@ const Navbar = () => {
           </DropdownMenu>
         </div>
 
-        {/* Mobile Navigation Icons */}
         <div className="md:hidden flex items-center gap-4">
           {navItems.map((item) => (
-            <Link 
-              key={item.path} 
-              to={item.path} 
+            <Link
+              key={item.path}
+              to={item.path}
               className={cn(
-                "flex items-center justify-center", 
+                "flex items-center justify-center",
                 location.pathname === item.path ? item.color : "text-muted-foreground"
               )}
             >

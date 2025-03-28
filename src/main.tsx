@@ -1,5 +1,11 @@
-import { createRoot } from 'react-dom/client'
-import App from './App.tsx'
-import './index.css'
+import { createRoot } from 'react-dom/client';
+import App from './App.tsx';
+import './index.css';
+import { AuthProvider } from '@/components/AuthContext.tsx'; // Nhập AuthProvider
 
-createRoot(document.getElementById("root")!).render(<App />);
+// Tạo root và render ứng dụng
+createRoot(document.getElementById('root')!).render(
+    <AuthProvider>
+        <App />
+    </AuthProvider>
+);

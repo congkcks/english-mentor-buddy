@@ -2,8 +2,9 @@
 class ApiService {
   private baseUrl: string;
 
-  constructor(baseUrl: string = import.meta.env.VITE_API_URL || 'https://localhost:5000') {
+  constructor(baseUrl: string = 'https://btl-d39f.onrender.com') {
     this.baseUrl = baseUrl;
+    console.log('Base URL:', this.baseUrl);
   }
 
   // Get the base URL
@@ -112,4 +113,4 @@ class ApiService {
 }
 
 // Create a new instance with the local API URL
-export const apiService = new ApiService('https://localhost:5000');
+export const apiService = new ApiService("https://btl-d39f.onrender.com");

@@ -52,6 +52,3 @@ Nếu bạn có bất kỳ câu hỏi nào liên quan đến bảo vệ dữ li�
 ## 🔗 Link Demo
 [Truy cập ngay](https://congkcks.github.io/english-mentor-buddy/)
 
-📌 **UserName:** `cong`  
-🔑 **Pass:** `123`
-

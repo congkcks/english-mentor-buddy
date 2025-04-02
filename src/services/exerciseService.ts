@@ -6,12 +6,34 @@ export interface ExerciseGenerationParams {
   EnglishLevel: number;
   TotalQuestions: number;
 }
-
 export enum AssignmentType {
   MostSuitableWord = 1,
   VerbConjugation = 2,
   ConditionalSentences = 3,
-  IndirectSpeech = 4
+  IndirectSpeech = 4,
+  FillTheBlank = 5,
+  ReadingComprehension = 6,
+  Grammar = 7,
+  Collocations = 8,
+  SynonymAndAntonym = 9,
+  Vocabulary = 10,
+  ErrorIdentification = 11,
+  WordFormation = 12,
+  PassiveVoice = 13,
+  RelativeClauses = 14,
+  ComparisonSentences = 15,
+  Inversion = 16,
+  Articles = 17,
+  Prepositions = 18,
+  Idioms = 19,
+  SentenceTransformation = 20,
+  PronunciationAndStress = 21,
+  ClozeTest = 22,
+  SentenceCombination = 23,
+  MatchingHeadings = 24,
+  DialogueCompletion = 25,
+  SentenceOrdering = 26,
+  WordMeaningInContext = 27
 }
 
 export interface Question {

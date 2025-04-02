@@ -21,7 +21,8 @@ const suggestedTopics = [
   "Animals I see",
   "Places nearby",
   "Clothes I wear",
-  "Family members"
+  "Family members",
+  "ManChester United"
 ];
 
 // Question type options
@@ -51,25 +52,140 @@ const questionTypeOptions: QuestionTypeOption[] = [
     value: AssignmentType.IndirectSpeech,
     label: "Indirect Speech",
     description: "Câu gián tiếp"
+  },
+  {
+    value: AssignmentType.FillTheBlank,
+    label: "Sentence Completion",
+    description: "Điền vào chỗ trống"
+  },
+  {
+    value: AssignmentType.ReadingComprehension,
+    label: "Reading Comprehension",
+    description: "Đọc hiểu văn bản"
+  },
+  {
+    value: AssignmentType.Grammar,
+    label: "Grammar",
+    description: "Ngữ pháp"
+  },
+  {
+    value: AssignmentType.Collocations,
+    label: "Collocation",
+    description: "Phối hợp từ"
+  },
+  {
+    value: AssignmentType.SynonymAndAntonym,
+    label: "Synonym/Antonym",
+    description: "Từ đồng nghĩa/trái nghĩa"
+  },
+  {
+    value: AssignmentType.Vocabulary,
+    label: "Vocabulary",
+    description: "Từ vựng"
+  },
+  {
+    value: AssignmentType.ErrorIdentification,
+    label: "Error Identification",
+    description: "Xác định lỗi sai"
+  },
+  {
+    value: AssignmentType.WordFormation,
+    label: "Word Formation",
+    description: "Chuyển đổi từ loại"
+  },
+  {
+    value: AssignmentType.PassiveVoice,
+    label: "Passive Voice",
+    description: "Câu bị động"
+  },
+  {
+    value: AssignmentType.RelativeClauses,
+    label: "Relative Clauses",
+    description: "Mệnh đề quan hệ"
+  },
+  {
+    value: AssignmentType.ComparisonSentences,
+    label: "Comparison Sentences",
+    description: "Câu so sánh"
+  },
+  {
+    value: AssignmentType.Inversion,
+    label: "Inversion",
+    description: "Câu đảo ngữ"
+  },
+  {
+    value: AssignmentType.Articles,
+    label: "Articles",
+    description: "Mạo từ"
+  },
+  {
+    value: AssignmentType.Prepositions,
+    label: "Prepositions",
+    description: "Giới từ"
+  },
+  {
+    value: AssignmentType.Idioms,
+    label: "Idioms",
+    description: "Thành ngữ"
+  },
+  {
+    value: AssignmentType.SentenceTransformation,
+    label: "Sentence Transformation",
+    description: "Câu đồng nghĩa"
+  },
+  {
+    value: AssignmentType.PronunciationAndStress,
+    label: "Pronunciation & Stress",
+    description: "Trọng âm và phát âm"
+  },
+  {
+    value: AssignmentType.ClozeTest,
+    label: "Cloze Test",
+    description: "Đọc điền từ"
+  },
+  {
+    value: AssignmentType.SentenceCombination,
+    label: "Sentence Combination",
+    description: "Nối câu"
+  },
+  {
+    value: AssignmentType.MatchingHeadings,
+    label: "Matching Headings",
+    description: "Chọn tiêu đề phù hợp"
+  },
+  {
+    value: AssignmentType.DialogueCompletion,
+    label: "Dialogue Completion",
+    description: "Hoàn thành đoạn hội thoại"
+  },
+  {
+    value: AssignmentType.SentenceOrdering,
+    label: "Sentence Ordering",
+    description: "Sắp xếp câu"
+  },
+  {
+    value: AssignmentType.WordMeaningInContext,
+    label: "Word Meaning in Context",
+    description: "Tìm nghĩa của từ trong ngữ cảnh"
   }
 ];
 
 // Question Types Selector Component
 const QuestionTypesSelector: React.FC<{
-  selectedType: AssignmentType;
-  onChange: (type: AssignmentType) => void;
-}> = ({ selectedType, onChange }) => {
+  selectedTypes: AssignmentType[];
+  onChange: (types: AssignmentType[]) => void;
+}> = ({ selectedTypes, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
-  const selectQuestionType = (type: AssignmentType) => {
-    onChange(type);
-    setIsOpen(false); // Đóng dropdown sau khi chọn
+  const toggleQuestionType = (type: AssignmentType) => {
+    if (selectedTypes.includes(type)) {
+      onChange(selectedTypes.filter((t) => t !== type));
+    } else {
+      onChange([...selectedTypes, type]);
+    }
   };
-
-  // Tìm label của loại câu hỏi đã chọn
-  const selectedTypeLabel = questionTypeOptions.find(opt => opt.value === selectedType)?.label || 'Chọn dạng câu hỏi';
 
   return (
     <div className="w-full space-y-2">
@@ -80,7 +196,9 @@ const QuestionTypesSelector: React.FC<{
           onClick={toggleDropdown}
         >
           <span className="text-gray-700 dark:text-gray-300">
-            {selectedTypeLabel}
+            {selectedTypes.length > 0
+              ? selectedTypes.map((type) => questionTypeOptions.find((opt) => opt.value === type)?.label).join(', ')
+              : 'Chọn dạng câu hỏi'}
           </span>
           {isOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
         </button>
@@ -90,9 +208,8 @@ const QuestionTypesSelector: React.FC<{
             {questionTypeOptions.map((option) => (
               <div
                 key={option.value}
-                className={`flex items-center space-x-2 p-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer ${selectedType === option.value ? 'bg-blue-50 dark:bg-blue-900/20' : ''
-                  }`}
-                onClick={() => selectQuestionType(option.value)}
+                className={`flex items-center space-x-2 p-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer ${selectedTypes.includes(option.value) ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
+                onClick={() => toggleQuestionType(option.value)}
               >
                 <div>
                   <p className="font-medium dark:text-white">
@@ -100,7 +217,7 @@ const QuestionTypesSelector: React.FC<{
                   </p>
                   <p className="text-sm text-gray-500 dark:text-gray-400">{option.description}</p>
                 </div>
-                {selectedType === option.value && (
+                {selectedTypes.includes(option.value) && (
                   <div className="ml-auto w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center">
                     <span className="text-white text-xs">✓</span>
                   </div>
@@ -132,10 +249,7 @@ const Exercises: React.FC = () => {
     feedback: string;
   } | null>(null);
 
-  // Thay đổi từ mảng sang giá trị đơn
-  const [selectedQuestionType, setSelectedQuestionType] = useState<AssignmentType>(
-    AssignmentType.MostSuitableWord // Mặc định là loại 1 (MostSuitableWord)
-  );
+  const [selectedQuestionTypes, setSelectedQuestionTypes] = useState<AssignmentType[]>([]);
 
   // Timer effect
   useEffect(() => {
@@ -157,8 +271,6 @@ const Exercises: React.FC = () => {
     return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
   };
 
-
-
   const handleSelectAnswer = (answer: string) => {
     setSelectedAnswer(answer);
     setAnswers(prev => ({ ...prev, [currentQuestion]: answer }));
@@ -177,7 +289,7 @@ const Exercises: React.FC = () => {
       setSelectedAnswer(answers[currentQuestion - 1] || null);
     }
   };
-  // Trong hàm handleCreateExercise của component Exercises
+
   const handleCreateExercise = async () => {
     if (!topic.trim()) {
       toast({
@@ -191,10 +303,9 @@ const Exercises: React.FC = () => {
     try {
       setIsLoading(true);
 
-      // Đảm bảo định dạng request đúng cấu trúc
       const params: ExerciseGenerationParams = {
         Topic: topic.trim(),
-        AssignmentTypes: [selectedQuestionType],
+        AssignmentTypes: selectedQuestionTypes,
         EnglishLevel: 1,
         TotalQuestions: totalQuestions
       };
@@ -214,7 +325,6 @@ const Exercises: React.FC = () => {
       console.log('RECEIVED RESPONSE:');
       console.log(JSON.stringify(result, null, 2));
 
-      // Kiểm tra kết quả trước khi sử dụng
       if (result && result.Questions && Array.isArray(result.Questions)) {
         setExerciseSet(result);
         setTotalQuestions(result.Questions.length);
@@ -245,7 +355,6 @@ const Exercises: React.FC = () => {
     }
   };
 
-  // Trong hàm handleSubmitExercise của component Exercises
   const handleSubmitExercise = async () => {
     if (!exerciseSet) return;
 
@@ -279,8 +388,6 @@ const Exercises: React.FC = () => {
       setIsLoading(false);
     }
   };
-
-
 
   // Progress percentage calculation
   const progressPercentage = (currentQuestion / totalQuestions) * 100;
@@ -401,8 +508,8 @@ const Exercises: React.FC = () => {
               <div className="mb-4">
                 <Label className="text-gray-700 dark:text-gray-300 mb-2 block">Loại câu hỏi</Label>
                 <QuestionTypesSelector
-                  selectedType={selectedQuestionType}
-                  onChange={setSelectedQuestionType}
+                  selectedTypes={selectedQuestionTypes}
+                  onChange={setSelectedQuestionTypes}
                 />
               </div>
 

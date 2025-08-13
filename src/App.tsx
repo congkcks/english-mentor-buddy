@@ -12,6 +12,7 @@ import Exercises from "./pages/Exercises";
 import Chat from "./pages/Chat";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
+import LoginAlt from "./pages/LoginAlt";
 import Register from "./pages/Register";
 import ProtectedRoute from "./components/ProtectedRoute"; // Nhập ProtectedRoute
 
@@ -27,7 +28,8 @@ const App = () => (
           <AnimatePresence mode="wait">
             <Routes>
               {/* Public routes */}
-              <Route path="/" element={<Login />} />
+              <Route path="/" element={<LoginAlt />} />
+              <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
 
               {/* Protected routes */}

@@ -17,6 +17,16 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Tài khoản admin mặc định
+const defaultAdminUser: User = {
+    id: 1,
+    email: 'admin@example.com',
+    password: '123456',
+    englishlevel: 'advanced',
+    tendangnhap: 'Admin',
+    ngaytaotaikhoan: new Date().toISOString()
+};
+
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
 
@@ -25,6 +35,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         if (storedUser) {
             setUser(JSON.parse(storedUser));
         }
+        // Loại bỏ việc tự động đăng nhập admin mặc định
+        // else {
+        //     // Nếu không có user đã lưu, tự động đăng nhập bằng admin mặc định
+        //     setUser(defaultAdminUser);
+        //     localStorage.setItem('user', JSON.stringify(defaultAdminUser));
+        // }
     }, []);
 
     const login = (userData: User) => {

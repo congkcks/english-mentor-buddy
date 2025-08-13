@@ -26,51 +26,19 @@ const App = () => (
         <HashRouter>
           <AnimatePresence mode="wait">
             <Routes>
+              {/* Route mặc định - chuyển thẳng tới trang chính */}
+              <Route path="/" element={<Index />} />
+
               {/* Public routes */}
-              <Route path="/" element={<Login />} />
+              <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
 
-              {/* Protected routes */}
-              <Route
-                path="/index"
-                element={
-                  <ProtectedRoute>
-                    <Index />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/dictionary"
-                element={
-                  <ProtectedRoute>
-                    <Dictionary />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/dictionary-result"
-                element={
-                  <ProtectedRoute>
-                    <DictionaryResult />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/exercises"
-                element={
-                  <ProtectedRoute>
-                    <Exercises />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/chat"
-                element={
-                  <ProtectedRoute>
-                    <Chat />
-                  </ProtectedRoute>
-                }
-              />
+              {/* Các routes chính - không còn bắt buộc đăng nhập */}
+              <Route path="/index" element={<Index />} />
+              <Route path="/dictionary" element={<Dictionary />} />
+              <Route path="/dictionary-result" element={<DictionaryResult />} />
+              <Route path="/exercises" element={<Exercises />} />
+              <Route path="/chat" element={<Chat />} />
 
               {/* Route cho trang không tìm thấy */}
               <Route path="*" element={<NotFound />} />

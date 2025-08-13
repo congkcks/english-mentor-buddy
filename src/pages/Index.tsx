@@ -1,6 +1,6 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 import FeatureCard from '@/components/FeatureCard';
 import { Book, GraduationCap, MessageCircle, Globe } from 'lucide-react';
 import MainLayout from '@/layouts/MainLayout';
@@ -54,7 +54,7 @@ const Index = () => {
                   | Nền tảng học tiếng Anh thông minh
                 </span>
               </div>
-              
+
               <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tighter">
                 Nâng cao kỹ năng tiếng Anh với{" "}
                 <span className="bg-gradient-to-r from-primary via-dictionary to-exercises bg-clip-text text-transparent inline-block">
@@ -64,6 +64,13 @@ const Index = () => {
               <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl mt-4">
                 Công cụ học tiếng Anh thông minh giúp bạn tra từ, tạo bài tập và luyện tập với AI chỉ trong một nền tảng.
               </p>
+
+              {/* Thông báo không cần đăng nhập */}
+              <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800 max-w-md">
+                <p className="text-sm text-green-800 dark:text-green-200">
+                  ✅ Không cần đăng nhập - Sử dụng ngay!
+                </p>
+              </div>
             </motion.div>
 
             <motion.div
@@ -72,18 +79,18 @@ const Index = () => {
               transition={{ duration: 0.7, delay: 0.3, ease: "easeOut" }}
               className="flex flex-wrap gap-4 justify-center"
             >
-              <a
-                href="/dictionary"
+              <Link
+                to="/dictionary"
                 className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               >
                 Bắt đầu ngay
-              </a>
-              <a
-                href="#features"
+              </Link>
+              <Link
+                to="/exercises"
                 className="inline-flex h-10 items-center justify-center rounded-md border border-input bg-background px-8 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               >
                 Khám phá tính năng
-              </a>
+              </Link>
             </motion.div>
           </div>
         </div>

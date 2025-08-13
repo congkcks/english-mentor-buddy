@@ -120,6 +120,8 @@ const Navbar = () => {
     }
   };
 
+
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 backdrop-blur-lg bg-background/80 dark:bg-background/80">
       <div className="container flex h-16 items-center justify-between">
@@ -182,169 +184,217 @@ const Navbar = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel className="font-medium">
-                {user ? `Xin chào, ${user.tendangnhap}` : 'Tài Khoản'}
+                {user ? `Xin chào, ${user.tendangnhap}` : 'Khách'}
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
 
-              <Dialog>
-                <DialogTrigger asChild>
-                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+              {user ? (
+                <>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                        <UserCircle className="mr-2 h-4 w-4" />
+                        <span>Thông tin cá nhân</span>
+                      </DropdownMenuItem>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>Thông tin cá nhân</DialogTitle>
+                        <DialogDescription>
+                          Xem và cập nhật thông tin tài khoản của bạn
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="py-4 space-y-4">
+                        <div className="flex items-center justify-center mb-6">
+                          <div className="relative">
+                            <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center overflow-hidden border-2 border-primary">
+                              <UserCircle className="w-20 h-20 text-muted-foreground" />
+                            </div>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="absolute bottom-0 right-0 rounded-full size-8 p-0"
+                            >
+                              <Settings className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+
+                        {isEditing ? (
+                          <>
+                            <div className="space-y-2">
+                              <Label htmlFor="tendangnhap" className="font-medium text-sm">Tên đăng nhập</Label>
+                              <Input
+                                id="tendangnhap"
+                                name="tendangnhap"
+                                value={formData.tendangnhap}
+                                onChange={handleInputChange}
+                                className="w-full"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="email" className="font-medium text-sm">Email</Label>
+                              <Input
+                                id="email"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleInputChange}
+                                className="w-full"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="englishlevel" className="font-medium text-sm">Cấp độ</Label>
+                              <Input
+                                id="englishlevel"
+                                name="englishlevel"
+                                value={formData.englishlevel}
+                                onChange={handleInputChange}
+                                className="w-full"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="password" className="font-medium text-sm">Mật khẩu</Label>
+                              <Input
+                                id="password"
+                                name="password"
+                                type="password"
+                                value={formData.password}
+                                onChange={handleInputChange}
+                                className="w-full"
+                                placeholder="Nhập mật khẩu mới"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <h4 className="font-medium text-sm">Ngày tham gia</h4>
+                              <p className="text-muted-foreground">
+                                {user?.ngaytaotaikhoan ? new Date(user.ngaytaotaikhoan).toLocaleDateString() : 'Chưa có'}
+                              </p>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div className="space-y-2">
+                              <h4 className="font-medium text-sm">Tên đăng nhập</h4>
+                              <p className="text-muted-foreground">{user?.tendangnhap || 'Chưa đăng nhập'}</p>
+                            </div>
+                            <div className="space-y-2">
+                              <h4 className="font-medium text-sm">Email</h4>
+                              <p className="text-muted-foreground">{user?.email || 'Chưa có'}</p>
+                            </div>
+                            <div className="space-y-2">
+                              <h4 className="font-medium text-sm">Cấp độ</h4>
+                              <p className="text-muted-foreground">{user?.englishlevel || 'Chưa có'}</p>
+                            </div>
+                            <div className="space-y-2">
+                              <h4 className="font-medium text-sm">Ngày tham gia</h4>
+                              <p className="text-muted-foreground">
+                                {user?.ngaytaotaikhoan ? new Date(user.ngaytaotaikhoan).toLocaleDateString() : 'Chưa có'}
+                              </p>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                      <DialogFooter>
+                        {isEditing ? (
+                          <>
+                            <Button variant="outline" onClick={() => setIsEditing(false)}>
+                              Hủy
+                            </Button>
+                            <Button onClick={handleSave}>Lưu thay đổi</Button>
+                          </>
+                        ) : (
+                          <Button variant="outline" onClick={handleEditToggle}>
+                            Chỉnh sửa
+                          </Button>
+                        )}
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+
+                  <Sheet>
+                    <SheetTrigger asChild>
+                      <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                        <Settings className="mr-2 h-4 w-4" />
+                        <span>Cài đặt</span>
+                      </DropdownMenuItem>
+                    </SheetTrigger>
+                    <SheetContent>
+                      <SheetHeader>
+                        <SheetTitle>Cài đặt</SheetTitle>
+                        <SheetDescription>
+                          Tùy chỉnh các thiết lập cho ứng dụng
+                        </SheetDescription>
+                      </SheetHeader>
+                      <div className="py-4 space-y-6">
+                        <div className="space-y-4">
+                          <h3 className="font-medium">Giao diện</h3>
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm">Chế độ tối</span>
+                            <Button variant="outline" size="sm" onClick={toggleTheme}>
+                              {theme === 'dark' ? <Sun className="h-4 w-4 mr-1" /> : <Moon className="h-4 w-4 mr-1" />}
+                              {theme === 'dark' ? 'Sáng' : 'Tối'}
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                      <SheetFooter>
+                        <Button variant="outline">Hủy</Button>
+                        <Button>Lưu thay đổi</Button>
+                      </SheetFooter>
+                    </SheetContent>
+                  </Sheet>
+
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Đăng xuất</span>
+                  </DropdownMenuItem>
+                </>
+              ) : (
+                <>
+                  <DropdownMenuItem onClick={() => navigate('/login')}>
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Đăng nhập</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/register')}>
                     <UserCircle className="mr-2 h-4 w-4" />
-                    <span>Thông tin cá nhân</span>
+                    <span>Đăng ký</span>
                   </DropdownMenuItem>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
-                  <DialogHeader>
-                    <DialogTitle>Thông tin cá nhân</DialogTitle>
-                    <DialogDescription>
-                      Xem và cập nhật thông tin tài khoản của bạn
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="py-4 space-y-4">
-                    <div className="flex items-center justify-center mb-6">
-                      <div className="relative">
-                        <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center overflow-hidden border-2 border-primary">
-                          <UserCircle className="w-20 h-20 text-muted-foreground" />
+                  <DropdownMenuSeparator />
+                  <Sheet>
+                    <SheetTrigger asChild>
+                      <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                        <Settings className="mr-2 h-4 w-4" />
+                        <span>Cài đặt</span>
+                      </DropdownMenuItem>
+                    </SheetTrigger>
+                    <SheetContent>
+                      <SheetHeader>
+                        <SheetTitle>Cài đặt</SheetTitle>
+                        <SheetDescription>
+                          Tùy chỉnh các thiết lập cho ứng dụng
+                        </SheetDescription>
+                      </SheetHeader>
+                      <div className="py-4 space-y-6">
+                        <div className="space-y-4">
+                          <h3 className="font-medium">Giao diện</h3>
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm">Chế độ tối</span>
+                            <Button variant="outline" size="sm" onClick={toggleTheme}>
+                              {theme === 'dark' ? <Sun className="h-4 w-4 mr-1" /> : <Moon className="h-4 w-4 mr-1" />}
+                              {theme === 'dark' ? 'Sáng' : 'Tối'}
+                            </Button>
+                          </div>
                         </div>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="absolute bottom-0 right-0 rounded-full size-8 p-0"
-                        >
-                          <Settings className="h-4 w-4" />
-                        </Button>
                       </div>
-                    </div>
-
-                    {isEditing ? (
-                      <>
-                        <div className="space-y-2">
-                          <Label htmlFor="tendangnhap" className="font-medium text-sm">Tên đăng nhập</Label>
-                          <Input
-                            id="tendangnhap"
-                            name="tendangnhap"
-                            value={formData.tendangnhap}
-                            onChange={handleInputChange}
-                            className="w-full"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="email" className="font-medium text-sm">Email</Label>
-                          <Input
-                            id="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleInputChange}
-                            className="w-full"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="englishlevel" className="font-medium text-sm">Cấp độ</Label>
-                          <Input
-                            id="englishlevel"
-                            name="englishlevel"
-                            value={formData.englishlevel}
-                            onChange={handleInputChange}
-                            className="w-full"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="password" className="font-medium text-sm">Mật khẩu</Label>
-                          <Input
-                            id="password"
-                            name="password"
-                            type="password"
-                            value={formData.password}
-                            onChange={handleInputChange}
-                            className="w-full"
-                            placeholder="Nhập mật khẩu mới"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <h4 className="font-medium text-sm">Ngày tham gia</h4>
-                          <p className="text-muted-foreground">
-                            {user?.ngaytaotaikhoan ? new Date(user.ngaytaotaikhoan).toLocaleDateString() : 'Chưa có'}
-                          </p>
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <div className="space-y-2">
-                          <h4 className="font-medium text-sm">Tên đăng nhập</h4>
-                          <p className="text-muted-foreground">{user?.tendangnhap || 'Chưa đăng nhập'}</p>
-                        </div>
-                        <div className="space-y-2">
-                          <h4 className="font-medium text-sm">Email</h4>
-                          <p className="text-muted-foreground">{user?.email || 'Chưa có'}</p>
-                        </div>
-                        <div className="space-y-2">
-                          <h4 className="font-medium text-sm">Cấp độ</h4>
-                          <p className="text-muted-foreground">{user?.englishlevel || 'Chưa có'}</p>
-                        </div>
-                        <div className="space-y-2">
-                          <h4 className="font-medium text-sm">Ngày tham gia</h4>
-                          <p className="text-muted-foreground">
-                            {user?.ngaytaotaikhoan ? new Date(user.ngaytaotaikhoan).toLocaleDateString() : 'Chưa có'}
-                          </p>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                  <DialogFooter>
-                    {isEditing ? (
-                      <>
-                        <Button variant="outline" onClick={() => setIsEditing(false)}>
-                          Hủy
-                        </Button>
-                        <Button onClick={handleSave}>Lưu thay đổi</Button>
-                      </>
-                    ) : (
-                      <Button variant="outline" onClick={handleEditToggle}>
-                        Chỉnh sửa
-                      </Button>
-                    )}
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-
-              <Sheet>
-                <SheetTrigger asChild>
-                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                    <Settings className="mr-2 h-4 w-4" />
-                    <span>Cài đặt</span>
-                  </DropdownMenuItem>
-                </SheetTrigger>
-                <SheetContent>
-                  <SheetHeader>
-                    <SheetTitle>Cài đặt</SheetTitle>
-                    <SheetDescription>
-                      Tùy chỉnh các thiết lập cho ứng dụng
-                    </SheetDescription>
-                  </SheetHeader>
-                  <div className="py-4 space-y-6">
-                    <div className="space-y-4">
-                      <h3 className="font-medium">Giao diện</h3>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm">Chế độ tối</span>
-                        <Button variant="outline" size="sm" onClick={toggleTheme}>
-                          {theme === 'dark' ? <Sun className="h-4 w-4 mr-1" /> : <Moon className="h-4 w-4 mr-1" />}
-                          {theme === 'dark' ? 'Sáng' : 'Tối'}
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                  <SheetFooter>
-                    <Button variant="outline">Hủy</Button>
-                    <Button>Lưu thay đổi</Button>
-                  </SheetFooter>
-                </SheetContent>
-              </Sheet>
-
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout}>
-                <LogOut className="mr-2 h-4 w-4" />
-                <span>Đăng xuất</span>
-              </DropdownMenuItem>
+                      <SheetFooter>
+                        <Button variant="outline">Hủy</Button>
+                        <Button>Lưu thay đổi</Button>
+                      </SheetFooter>
+                    </SheetContent>
+                  </Sheet>
+                </>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

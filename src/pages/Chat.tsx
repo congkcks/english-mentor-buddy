@@ -207,10 +207,10 @@ const Consultation: React.FC = () => {
         <div className="flex-1 bg-white rounded-lg shadow-sm overflow-hidden flex flex-col">
           <div className="border-b p-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-engace-orange rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-r from-pink-500 to-rose-600 rounded-lg flex items-center justify-center">
                 <MessageSquare size={20} color="white" />
               </div>
-              <h2 className="font-semibold text-lg">Tư vấn với CDKAce</h2>
+              <h2 className="font-semibold text-lg">Tư vấn với AI</h2>
             </div>
             <Button
               variant="outline"
@@ -232,8 +232,8 @@ const Consultation: React.FC = () => {
               >
                 <div
                   className={`rounded-2xl p-4 ${msg.isUser
-                    ? 'bg-blue-100 text-right'
-                    : 'bg-orange-100'
+                    ? 'bg-gradient-to-r from-pink-100 to-rose-100 text-right'
+                    : 'bg-gradient-to-r from-gray-100 to-gray-50'
                     }`}
                 >
                   <p className="whitespace-pre-line">{msg.content}</p>
@@ -245,7 +245,7 @@ const Consultation: React.FC = () => {
             ))}
             {isLoading && (
               <div className="max-w-3xl">
-                <div className="bg-orange-100 rounded-2xl p-4">
+                <div className="bg-gradient-to-r from-gray-100 to-gray-50 rounded-2xl p-4">
                   <div className="flex space-x-2">
                     <div className="w-3 h-3 rounded-full bg-gray-400 animate-bounce"></div>
                     <div className="w-3 h-3 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '0.2s' }}></div>
@@ -270,7 +270,7 @@ const Consultation: React.FC = () => {
                 />
               </div>
               <Button
-                className="bg-engace-orange hover:bg-engace-orange/90 rounded-xl px-4"
+                className="bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-white rounded-xl px-4"
                 onClick={handleSendMessage}
                 disabled={isLoading || !message.trim()}
               >

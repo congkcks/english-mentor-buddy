@@ -54,9 +54,10 @@ const Navbar = () => {
   });
 
   const navItems = [
-    { name: 'Dictionary', path: '/dictionary', icon: Book, color: 'text-dictionary' },
-    { name: 'Exercises', path: '/exercises', icon: GraduationCap, color: 'text-exercises' },
-    { name: 'AI Chat', path: '/chat', icon: MessageCircle, color: 'text-chat' },
+    { name: 'Dictionary', path: '/dictionary', icon: Book, color: 'text-pink-600' },
+    { name: 'Exercises', path: '/exercises', icon: GraduationCap, color: 'text-fuchsia-600' },
+    { name: 'AI Chat', path: '/chat', icon: MessageCircle, color: 'text-rose-600' },
+    { name: 'Topics', path: '/topics', icon: Globe, color: 'text-pink-500' },
   ];
 
   const handleLogout = () => {
@@ -132,9 +133,11 @@ const Navbar = () => {
             transition={{ duration: 0.5 }}
             className="flex items-center gap-2"
           >
-            <Globe className="h-6 w-6 text-primary" />
-            <span className="text-2xl font-bold bg-gradient-to-r from-primary to-dictionary bg-clip-text text-transparent">
-              BTL
+            <div className="p-1.5 rounded-lg bg-gradient-to-r from-pink-500 to-rose-600">
+              <Globe className="h-6 w-6 text-white" />
+            </div>
+            <span className="text-2xl font-bold bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent">
+              EngBuddy
             </span>
             <span className="hidden sm:inline-block text-sm text-muted-foreground">
               | Nền tảng học tiếng Anh thông minh

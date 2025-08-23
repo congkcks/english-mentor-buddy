@@ -63,11 +63,11 @@ const Dictionary: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-engace-light dark:bg-gray-900">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-pink-50 via-rose-50 to-white dark:bg-gray-900">
       <Header />
       <main className="flex-1 container max-w-screen-xl mx-auto py-8 px-4 animate-fade-in">
         <div className="flex justify-center mb-8">
-          <div className="w-24 h-24 bg-engace-blue rounded-2xl flex items-center justify-center">
+          <div className="w-24 h-24 bg-gradient-to-r from-pink-500 to-rose-600 rounded-2xl flex items-center justify-center shadow-lg shadow-pink-200/50">
             <BookText size={48} color="white" />
           </div>
         </div>
@@ -88,7 +88,7 @@ const Dictionary: React.FC = () => {
               disabled={isLoading}
             />
             <Star
-              className="absolute right-12 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-engace-purple cursor-pointer"
+              className="absolute right-12 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-pink-500 cursor-pointer transition-colors"
               size={20}
               onClick={() => handleAddToFavorites(searchTerm)}
             />
@@ -105,7 +105,7 @@ const Dictionary: React.FC = () => {
         <div className="max-w-2xl mx-auto">
           <Button
             onClick={handleSearch}
-            className="w-full py-6 bg-gray-600 hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-xl flex items-center justify-center gap-2 text-lg"
+            className="w-full py-6 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-white rounded-xl flex items-center justify-center gap-2 text-lg shadow-lg shadow-pink-200/50 transition-all"
             disabled={isLoading}
           >
             <Search size={20} />

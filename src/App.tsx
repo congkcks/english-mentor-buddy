@@ -10,6 +10,7 @@ import Dictionary from "./pages/Dictionary";
 import DictionaryResult from "./pages/DictionaryResult";
 import Exercises from "./pages/Exercises";
 import Chat from "./pages/Chat";
+import EnglishTopicCards from "./pages/EnglishTopicCards";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -39,6 +40,7 @@ const App = () => (
               <Route path="/dictionary-result" element={<DictionaryResult />} />
               <Route path="/exercises" element={<Exercises />} />
               <Route path="/chat" element={<Chat />} />
+              <Route path="/topics" element={<EnglishTopicCards />} />
 
               {/* Route cho trang không tìm thấy */}
               <Route path="*" element={<NotFound />} />

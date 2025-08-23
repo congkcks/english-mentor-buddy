@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
     proxy: {
       "/api": {
-        target: "https://btl-d39f.onrender.com", // Địa chỉ server backend
+        target: "https://EngBuddy-d39f.onrender.com", // Địa chỉ server backend
         changeOrigin: true, // Thay đổi origin trong header thành target
         secure: false, // Tắt kiểm tra SSL nếu cần (dùng trong dev)
         // rewrite: (path) => path.replace(/^\/api/, '') // Tùy chọn: bỏ prefix /api nếu server không cần

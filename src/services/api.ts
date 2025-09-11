@@ -113,4 +113,4 @@ class ApiService {
 }
 
 // Create a new instance with the local API URL
-export const apiService = new ApiService("https://EngBuddy-d39f.onrender.com");
+export const apiService = new ApiService("https://btl-d39f.onrender.com");

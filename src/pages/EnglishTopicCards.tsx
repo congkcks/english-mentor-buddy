@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { textToSpeech, speechToText } from "@/services/elevenLabsService";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -106,6 +107,28 @@ export default function EnglishTopicCards() {
     const [isRecording, setIsRecording] = useState(false);
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [isAudioEnabled, setIsAudioEnabled] = useState(true);
+    const [ttsLoading, setTtsLoading] = useState(false);
+    // ElevenLabs TTS thử nghiệm
+    const handlePlayElevenLabsTTS = async () => {
+        if (!inputMessage.trim()) return;
+        setTtsLoading(true);
+        try {
+            const audioBlob = await textToSpeech(inputMessage);
+            const audioUrl = URL.createObjectURL(audioBlob);
+            const audio = new Audio(audioUrl);
+            audio.onended = () => {
+                URL.revokeObjectURL(audioUrl);
+                setTtsLoading(false);
+            };
+            audio.onerror = () => {
+                setTtsLoading(false);
+            };
+            audio.play();
+        } catch (err) {
+            alert("Lỗi phát âm bằng ElevenLabs: " + (err as any).message);
+            setTtsLoading(false);
+        }
+    };
 
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const audioChunksRef = useRef<Blob[]>([]);
@@ -173,30 +196,15 @@ export default function EnglishTopicCards() {
         }
     };
 
+    // Sử dụng ElevenLabs Speech-to-Text
     const transcribeAudio = async (audioBlob: Blob) => {
-        // Using Web Speech API for basic speech recognition
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-            const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
-            const recognition = new SpeechRecognition();
-
-            recognition.continuous = false;
-            recognition.interimResults = false;
-            recognition.lang = 'en-US';
-
-            recognition.onresult = (event: any) => {
-                const transcript = event.results[0][0].transcript;
-                setInputMessage(transcript);
-            };
-
-            recognition.onerror = (event: any) => {
-                console.error('Speech recognition error:', event.error);
-                setInputMessage("Lỗi nhận dạng giọng nói");
-            };
-
-            recognition.start();
-        } else {
-            // Fallback: set placeholder text indicating speech recognition is not available
-            setInputMessage("Nhận dạng giọng nói không khả dụng trên trình duyệt này");
+        setInputMessage("Đang nhận diện giọng nói...");
+        try {
+            const transcript = await speechToText(audioBlob);
+            setInputMessage(transcript || "Không nhận diện được nội dung");
+        } catch (err) {
+            setInputMessage("Lỗi nhận diện với ElevenLabs");
+            console.error(err);
         }
     };
 
@@ -436,6 +444,18 @@ export default function EnglishTopicCards() {
                                 className="bg-primary hover:bg-primary/90"
                             >
                                 <Send className="w-4 h-4" />
+                            </Button>
+                            <Button
+                                onClick={handlePlayElevenLabsTTS}
+                                disabled={!inputMessage.trim() || ttsLoading}
+                                variant="outline"
+                                title="Phát thử ElevenLabs TTS"
+                            >
+                                {ttsLoading ? (
+                                    <span className="animate-spin">🔊</span>
+                                ) : (
+                                    <Volume2 className="w-4 h-4" />
+                                )}
                             </Button>
                         </div>
                     </DialogContent>
